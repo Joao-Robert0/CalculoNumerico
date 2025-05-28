@@ -8,6 +8,7 @@ def print_menu():
     print("a) Bissecção")
     print("b) Newton")
     print("c) Secantes")
+    print("d) Posição Falsa")
     print("d) Sair")
     print("===========================")
 
@@ -70,10 +71,27 @@ def secant_method(f):
     result = newton(func=f, x0=x0, x1=x1)  # Método da secante usa x0 e x1
     return result
 
+def regula_falsi(f, tol=1e-5, max_iter=100):
+    x0 = x_selection("Forneça o primeiro ponto inicial x0 (ex.: '5'): ")
+    x1 = x_selection("Forneça o segundo ponto inicial x1 (ex.: '6.5'): ")
+    if f(x0) * f(x1) >= 0:
+        raise ValueError("Initial guesses must have opposite signs.")
+
+    for _ in range(max_iter):
+        x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0))
+        if abs(f(x2)) < tol:
+            return x2
+        if f(x0) * f(x2) < 0:
+            x1 = x2
+        else:
+            x0 = x2
+
+    return None  # No root found within the maximum iterations
+
 if __name__ == "__main__":
     print_menu()
     option = input("Escolha uma opção (a-d): ").lower()
-    if option == "d":
+    if option == "e":
         exit()
     
     expression = input("Forneça a função f(x) (ex.: 'x**2 - 4' ou 'sin(x) + math.pi'): ").strip()
@@ -89,6 +107,9 @@ if __name__ == "__main__":
                 print(f"Raiz encontrada: {root:.6f}")
         case "c":
             root = secant_method(f)
+            print(f"Raiz encontrada: {root:.6f}")
+        case "d":
+            root = regula_falsi(f)
             print(f"Raiz encontrada: {root:.6f}")
         case _:
             print("Opção inválida.")
