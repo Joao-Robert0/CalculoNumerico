@@ -19,7 +19,7 @@ def print_resultados_bissecao(raiz_encontrada, historico):
     print(f"{'n':<3} | {'a':<10} | {'b':<10} | {'f(a)':<10} | {'f(b)':<10} | {'m':<10} | {'f(m)':<10} | {'Erro':<10}")
     print("=" * 90)
     for item in historico:
-        print(f"{item[0]:<3} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
+        print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
     print("=" * 90)
 
 def print_resultados_newton(raiz_encontrada, historico):
@@ -34,7 +34,7 @@ def print_resultados_newton(raiz_encontrada, historico):
     print("=" * 60)
     for item in historico:
         if len(item) >= 4:
-            print(f"{item[0]:<3} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
+            print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
     print("=" * 60)
 
 def print_resultados_secante(raiz_encontrada, historico):
@@ -49,7 +49,7 @@ def print_resultados_secante(raiz_encontrada, historico):
     print("=" * 110)
     for item in historico:
         if len(item) >= 8:
-            print(f"{item[0]:<3} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<12.4f} | {item[4]:<12.4f} | {item[5]:<10.4f} | {item[6]:<12.4f} | {item[7]:<10.4f}")
+            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<12.4f} | {item[4]:<12.4f} | {item[5]:<10.4f} | {item[6]:<12.4f} | {item[7]:<10.4f}")
     print("=" * 110)
 
 def print_resultados_regula_falsi(raiz_encontrada, historico):
@@ -64,7 +64,7 @@ def print_resultados_regula_falsi(raiz_encontrada, historico):
     print("=" * 100)
     for item in historico:
         if len(item) >= 8:
-            print(f"{item[0]:<3} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
+            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
     print("=" * 100)
 
 
