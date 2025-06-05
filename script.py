@@ -97,15 +97,6 @@ def x_selection(prompt="Forneça o valor de x0 (ex.: '5' ou '6.5'): "):
         except ValueError:
             print("Erro: Valor inválido.")
 
-def compute_derivative(expression):
-    x = symbols('x')
-    try:
-        f = sympify(expression)
-        df_dx = diff(f, x)
-        return lambdify(x, df_dx, modules=['numpy'])  # Converter para função numérica
-    except Exception as e:
-        raise ValueError(f"Erro ao calcular derivada: {e}")
-
 def bissecao(f, tol, max_iter):
     historico_iteracoes = []
     iteracao = 0
@@ -135,12 +126,12 @@ def bissecao(f, tol, max_iter):
 
     return (a + b) / 2, historico_iteracoes
 
-def newton(f, derivada, tol, max_iter):
+def newton(f, tol, max_iter):
     x0 = x_selection()
     historico_iteracoes = []
     x_n = x0
     iteracao = 0
-    df = derivada
+    df =  safe_create_function(input("Insira a derivada f(x)"))
 
     for n in range(max_iter):
         iteracao = n + 1
@@ -272,7 +263,7 @@ if __name__ == "__main__":
             raiz, historico = bissecao(f, tolerancia, maximo_iteracoes)
             print_resultados_bissecao(raiz, historico)
         case "b":
-            raiz, historico = newton(f, compute_derivative(expression), tolerancia, maximo_iteracoes)
+            raiz, historico = newton(f, tolerancia, maximo_iteracoes)
             print_resultados_newton(raiz, historico)
         case "c":
             raiz, historico = secante(f, tolerancia, maximo_iteracoes)
