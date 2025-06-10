@@ -4,7 +4,7 @@ from sympy import symbols, diff, sympify, lambdify
 
 def print_menu():
     print("\n=== Métodos para calcular raízes ===")
-    opcoes = ["a) Bissecção", "b) Newton", "c) Secantes", "d) Posição Falsa", "e) Sair"]
+    opcoes = ["a) Bissecção", "b) Newton", "c) Secantes", "d) Posição Falsa", "e) Ponto Fixo", "f) Sair"]
     print("\n".join(opcoes))
     print("===========================")
 
@@ -19,7 +19,10 @@ def print_resultados_bissecao(raiz_encontrada, historico):
     print(f"{'n':<3} | {'a':<10} | {'b':<10} | {'f(a)':<10} | {'f(b)':<10} | {'m':<10} | {'f(m)':<10} | {'Erro':<10}")
     print("=" * 90)
     for item in historico:
-        print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
+        if item[0] == 1:
+            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
+        else:
+            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
     print("=" * 90)
 
 def print_resultados_newton(raiz_encontrada, historico):
@@ -34,7 +37,10 @@ def print_resultados_newton(raiz_encontrada, historico):
     print("=" * 60)
     for item in historico:
         if len(item) >= 4:
-            print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
+            if item[0] == 1:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
+            else:
+                print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
     print("=" * 60)
 
 def print_resultados_secante(raiz_encontrada, historico):
@@ -49,7 +55,10 @@ def print_resultados_secante(raiz_encontrada, historico):
     print("=" * 110)
     for item in historico:
         if len(item) >= 8:
-            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<12.4f} | {item[4]:<12.4f} | {item[5]:<10.4f} | {item[6]:<12.4f} | {item[7]:<10.4f}")
+            if item[0] == 1:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
+            else:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<12.4f} | {item[4]:<12.4f} | {item[5]:<10.4f} | {item[6]:<12.4f} | {item[7]:<10.4f}")
     print("=" * 110)
 
 def print_resultados_regula_falsi(raiz_encontrada, historico):
@@ -64,8 +73,28 @@ def print_resultados_regula_falsi(raiz_encontrada, historico):
     print("=" * 100)
     for item in historico:
         if len(item) >= 8:
-            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
+            if item[0] == 1:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
+            else:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
     print("=" * 100)
+
+def print_resultados_ponto_fixo(raiz_encontrada, historico):
+    if raiz_encontrada is not None:
+        print(f"\nRaiz encontrada (Ponto Fixo): {raiz_encontrada:.4f}")
+    else:
+        print("\nNão foi possível encontrar o ponto fixo.")
+
+    print("\nHistórico das Iterações - Método do Ponto Fixo:")
+    print("=" * 60)
+    print(f"{'n':<3} | {'x_n':<12} | {'f(x_n)':<12} | {'Erro':<12}")
+    print("=" * 60)
+    for item in historico:
+        # item: [iteracao, x_n, f_xn, erro]
+        if len(item) >= 4:
+            print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
+    print("=" * 60)
+
 
 
 def safe_create_function(user_expr):
@@ -246,14 +275,33 @@ def regula_falsi(f, tol, max_iter):
     print("Número máximo de iterações atingido. A solução pode não ter convergido para a tolerância desejada.")
     return xc, historico_iteracoes
 
+def ponto_fixo(f, tol, max_iter):
+    x0 = x_selection("Forneça o ponto inicial x0 para f(x): ")
+    historico_iteracoes = []
+    x_n = x0
+    
+    for iteracao_num in range(1, max_iter + 1):
+        f_xn = f(x_n)
+        erro = abs(f_xn - x_n)
+        
+        historico_iteracoes.append([iteracao_num, x_n, f_xn, erro])
+        
+        if erro < tol:
+            return f_xn, historico_iteracoes
+        
+        x_n = f_xn
+        
+    print("Número máximo de iterações atingido. A solução pode não ter convergido.")
+    return x_n, historico_iteracoes
+
 
 if __name__ == "__main__":
 
     tolerancia, maximo_iteracoes = 1e-4, 30
 
     print_menu()
-    option = input("Escolha uma opção (a-e): ").lower()
-    if option == "e": exit()
+    option = input("Escolha uma opção (a-f): ").lower()
+    if option == "f": exit()
     
     expression = input("Forneça a função f(x) (ex.: 'x**2 - 4' ou 'sin(x) + math.pi'): ").strip()
     f = safe_create_function(expression)
@@ -271,5 +319,8 @@ if __name__ == "__main__":
         case "d":
             raiz, historico = regula_falsi(f, tolerancia, maximo_iteracoes)
             print_resultados_regula_falsi(raiz, historico)
+        case "e":
+            raiz, historico = ponto_fixo(f, tolerancia, maximo_iteracoes)
+            print_resultados_ponto_fixo(raiz, historico)
         case _:
             print("Opção inválida.")
