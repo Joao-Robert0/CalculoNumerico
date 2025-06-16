@@ -190,8 +190,8 @@ def secante(f,tol,max_iter):
     historico_iteracoes = []
     iteracao = 0
 
-    x0 = x_selection("Forneça o primeiro ponto inicial x0 (ex.: '5'): ")
-    x1 = x_selection("Forneça o segundo ponto inicial x1 (ex.: '6.5'): ")
+    x0 = x_selection("Forneça o primeiro ponto x_k (ex.: '5'): ")
+    x1 = x_selection("Forneça o segundo ponto  x_k-1 (ex.: '6.5'): ")
 
     x_k_minus_1 = x0
     x_k = x1
