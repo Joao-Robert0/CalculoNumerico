@@ -38,7 +38,7 @@ def print_resultados_newton(raiz_encontrada, historico):
     for item in historico:
         if len(item) >= 4:
             if item[0] == 1:
-                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {"-----"}")
             else:
                 print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
     print("=" * 60)
@@ -87,12 +87,15 @@ def print_resultados_ponto_fixo(raiz_encontrada, historico):
 
     print("\nHistórico das Iterações - Método do Ponto Fixo:")
     print("=" * 60)
-    print(f"{'n':<3} | {'x_n':<12} | {'f(x_n)':<12} | {'Erro':<12}")
+    print(f"{'n':<3} | {'x':<12} | {'f(x)':<12} | {'Erro':<12}")
     print("=" * 60)
     for item in historico:
         # item: [iteracao, x_n, f_xn, erro]
         if len(item) >= 4:
-            print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
+            if item[0] == 1:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {"-----"}")
+            else:
+                print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
     print("=" * 60)
 
 
@@ -201,7 +204,6 @@ def secante(f,tol,max_iter):
         if abs(denominador) < 1e-12:  
             print("Denominador muito próximo de zero. O método pode não convergir.")
             historico_iteracoes.append([iteracao, x_k_minus_1, x_k, f_xk_minus_1, f_xk, None, None, float('inf')])
-            print("Oi, passei no abs")
             return None, historico_iteracoes
 
         x_k_plus_1 = x_k - f_xk * (x_k - x_k_minus_1) / denominador
@@ -210,8 +212,6 @@ def secante(f,tol,max_iter):
 
         # [n, x_k-1, x_k, f(x_k-1), f(x_k), x_k+1, f(x_k+1), erro_k]
         historico_iteracoes.append([iteracao, x_k_minus_1, x_k, f_xk_minus_1, f_xk, x_k_plus_1, f_xk_plus_1, erro])
-        print("Oi passei no lugar normal")
-
         # Critério de parada
         if erro < tol or abs(f_xk_plus_1) < 1e-12 : 
             return x_k_plus_1, historico_iteracoes
@@ -276,20 +276,21 @@ def regula_falsi(f, tol, max_iter):
     return xc, historico_iteracoes
 
 def ponto_fixo(f, tol, max_iter):
+    g = safe_create_function(input("Forneça a função g(x) (ex.: 'sqrt(x + 1)' ou 'cos(x)'): "))
     x0 = x_selection("Forneça o ponto inicial x0 para f(x): ")
     historico_iteracoes = []
     x_n = x0
     
     for iteracao_num in range(1, max_iter + 1):
-        f_xn = f(x_n)
-        erro = abs(f_xn - x_n)
+        g_xn = g(x_n)
+        erro = abs(g_xn - x_n)
         
-        historico_iteracoes.append([iteracao_num, x_n, f_xn, erro])
+        historico_iteracoes.append([iteracao_num, x_n,f(x_n), erro])
         
         if erro < tol:
-            return f_xn, historico_iteracoes
+            return g_xn, historico_iteracoes
         
-        x_n = f_xn
+        x_n = g_xn
         
     print("Número máximo de iterações atingido. A solução pode não ter convergido.")
     return x_n, historico_iteracoes
