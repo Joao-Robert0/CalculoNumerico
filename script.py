@@ -70,7 +70,7 @@ def print_resultados_regula_falsi(raiz_encontrada, historico):
 
     print("\nHistórico das Iterações - Método da Posição Falsa:")
     print("=" * 100)
-    print(f"{'n':<3} | {'x0':<10} | {'x1':<10} | {'f(x0)':<10} | {'f(x1)':<10} | {'xc':<10} | {'f(xc)':<10} | {'Erro':<10}")
+    print(f"{'n':<3} | {'a':<10} | {'f(a)':<10} | {'b':<10} | {'f(b)':<10} | {'x':<10} | {'f(x)':<10} | {'Erro':<10}")
     print("=" * 100)
     for item in historico:
         if len(item) >= 8:
@@ -226,15 +226,15 @@ def secante(f,tol,max_iter):
 
 def regula_falsi(f, tol, max_iter):
     historico_iteracoes = []
-    x0 = x_selection("Forneça o primeiro ponto inicial x0 (ex.: '5'): ")
-    x1 = x_selection("Forneça o segundo ponto inicial x1 (ex.: '6.5'): ")
+    x0 = x_selection("Forneça o primeiro ponto inicial a (ex.: '5'): ")
+    x1 = x_selection("Forneça o segundo ponto inicial b (ex.: '6.5'): ")
 
     f_x0 = f(x0)
     f_x1 = f(x1)
 
     if f_x0 * f_x1 >= 0:
         print("Erro: Os valores iniciais f(x0) e f(x1) devem ter sinais opostos.")
-        historico_iteracoes.append([0, x0, x1, f_x0, f_x1, None, None, float('inf')])
+        historico_iteracoes.append([0, x0, f_x0, x1, f_x1, None, None, float('inf')])
         return None, historico_iteracoes
 
     xc = None
@@ -247,7 +247,7 @@ def regula_falsi(f, tol, max_iter):
         denominador = f_x1 - f_x0
         if abs(denominador) < 1e-12:
             print("Denominador muito próximo de zero. O método pode não convergir.")
-            historico_iteracoes.append([n_iter, x0, x1, f_x0, f_x1, None, None, float('inf')])
+            historico_iteracoes.append([n_iter, x0, f_x0,x1,f_x1, None, None, float('inf')])
             return xc, historico_iteracoes 
 
         xc = x1 - f_x1 * (x1 - x0) / denominador
@@ -255,7 +255,7 @@ def regula_falsi(f, tol, max_iter):
         f_xc = f(xc)
         erro_atual = abs(f_xc)
 
-        historico_iteracoes.append([n_iter, x0, x1, f_x0, f_x1, xc, f_xc, erro_atual])
+        historico_iteracoes.append([n_iter, x0, f_x0, x1,f_x1, xc, f_xc, erro_atual])
 
         if erro_atual < tol:
             return xc, historico_iteracoes
