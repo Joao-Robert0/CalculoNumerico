@@ -16,13 +16,14 @@ def print_resultados_bissecao(raiz_encontrada, historico):
 
     print("\nHistórico das Iterações - Método da Bisseção:")
     print("=" * 90)
-    print(f"{'n':<3} | {'a':<10} | {'b':<10} | {'f(a)':<10} | {'f(b)':<10} | {'m':<10} | {'f(m)':<10} | {'Erro':<10}")
+    print(f"{'n':<3} | {'a':<10} | {'b':<10} | {'x':<10} | {'f(x)':<10} | {'Erro':<10}")
     print("=" * 90)
     for item in historico:
-        if item[0] == 1:
-            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {"-----"}")
-        else:
-            print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f} | {item[6]:<10.4f} | {item[7]:<10.4f}")
+        if len(item) >= 4:
+            if item[0] == 1:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {"-----"}")
+            else:
+                print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {item[3]:<10.4f} | {item[4]:<10.4f} | {item[5]:<10.4f}")
     print("=" * 90)
 
 def print_resultados_newton(raiz_encontrada, historico):
@@ -137,14 +138,14 @@ def bissecao(f, tol, max_iter):
     
     if f_a * f_b >= 0:
         print("Erro: f(a) e f(b) devem ter sinais opostos para o método da bisseção.")
-        return None, [0, a, b, f_a, f_b, (a+b)/2, f((a+b)/2), float('inf')]
+        return None, [0, a, b, (a+b)/2, f((a+b)/2), float('inf')]
 
     for i in range(max_iter):
         m = (a + b) / 2 
         f_m = f(m)    
         erro = (b - a) / 2
 
-        historico_iteracoes.append([i+1, a, b, f_a, f_b, m, f_m, erro])
+        historico_iteracoes.append([i+1, a, b, m, f_m, erro])
 
         if erro < tol or abs(f_m) < 1e-12: 
             return m, historico_iteracoes
