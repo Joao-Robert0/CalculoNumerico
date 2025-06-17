@@ -34,10 +34,10 @@ def print_resultados_newton(raiz_encontrada, historico):
 
     print("\nHistórico das Iterações - Método de Newton:")
     print("=" * 60)
-    print(f"{'n':<3} | {'x_n':<12} | {'f(x_n)':<12} | {'Erro':<12}")
+    print(f"{'n':<3} | {'x':<12} | {'f(x)':<12} | {'Erro':<12}")
     print("=" * 60)
     for item in historico:
-        if len(item) >= 4:
+        if len(item) >= 3:
             if item[0] == 1:
                 print(f"{item[0]:<3.0f} | {item[1]:<10.4f} | {item[2]:<10.4f} | {"-----"}")
             else:
@@ -99,12 +99,15 @@ def print_resultados_ponto_fixo(raiz_encontrada, historico):
                 print(f"{item[0]:<3.0f} | {item[1]:<12.4f} | {item[2]:<12.4f} | {item[3]:<12.4f}")
     print("=" * 60)
 
-
-
 def safe_create_function(user_expr):
     def f(x):
+        # expõe x e todas as funções/constantes de math
         allowed = {"x": x}
-        allowed.update({name: getattr(math, name) for name in dir(math) if not name.startswith("__")})
+        allowed.update({
+            name: getattr(math, name)
+            for name in dir(math)
+            if not name.startswith("__")
+        })
         return eval(user_expr, {"__builtins__": None}, allowed)
     return f
 
@@ -143,7 +146,7 @@ def bissecao(f, tol, max_iter):
     for i in range(max_iter):
         m = (a + b) / 2 
         f_m = f(m)    
-        erro = (b - a) / 2
+        erro = abs((b - a) / b)
 
         historico_iteracoes.append([i+1, a, b, m, f_m, erro])
 
@@ -163,27 +166,32 @@ def newton(f, tol, max_iter):
     x0 = x_selection()
     historico_iteracoes = []
     x_n = x0
-    iteracao = 0
-    df =  safe_create_function(input("Insira a derivada f(x)"))
+    df =  safe_create_function(input("Insira a derivada f(x):"))
 
-    for n in range(max_iter):
-        iteracao = n + 1
+    for iteracao in range(1, max_iter + 1):
         f_xn = f(x_n)
         df_xn = df(x_n)
-
+        
+        # Verifica se a derivada é muito pequena
         if abs(df_xn) < 1e-12:
+            print("Derivada muito próxima de zero. O método pode não convergir.")
             historico_iteracoes.append([iteracao, x_n, f_xn, float('inf')])
             return None, historico_iteracoes
-
+        
+        # Calcula próximo ponto
         x_n_mais_1 = x_n - f_xn / df_xn
-        erro = abs(x_n_mais_1 - x_n)
+        erro = abs(x_n - x_n_mais_1)
+        
+        # Registra no histórico
         historico_iteracoes.append([iteracao, x_n, f_xn, erro])
-
-        if erro < tol:
-            historico_iteracoes.append([iteracao + 1, x_n_mais_1, f(x_n_mais_1), erro])
+        
+        # Critério de parada
+        if erro < tol or abs(f_xn) < tol:
             return x_n_mais_1, historico_iteracoes
-
+        
         x_n = x_n_mais_1
+    
+    print("Número máximo de iterações atingido.")
     return x_n, historico_iteracoes
 
 def secante(f,tol,max_iter):
@@ -204,7 +212,7 @@ def secante(f,tol,max_iter):
 
         if abs(denominador) < 1e-12:  
             print("Denominador muito próximo de zero. O método pode não convergir.")
-            historico_iteracoes.append([iteracao, x_k_minus_1, x_k, f_xk_minus_1, f_xk, None, None, float('inf')])
+            historico_iteracoes.append([iteracao, x_k_minus_1, f_xk_minus_1, x_k, f_xk, None, None, float('inf')])
             return None, historico_iteracoes
 
         x_k_plus_1 = x_k - f_xk * (x_k - x_k_minus_1) / denominador
@@ -212,7 +220,7 @@ def secante(f,tol,max_iter):
         erro = abs(x_k_plus_1 - x_k)
 
         # [n, x_k-1, x_k, f(x_k-1), f(x_k), x_k+1, f(x_k+1), erro_k]
-        historico_iteracoes.append([iteracao, x_k_minus_1, x_k, f_xk_minus_1, f_xk, x_k_plus_1, f_xk_plus_1, erro])
+        historico_iteracoes.append([iteracao, x_k_minus_1, f_xk_minus_1, x_k, f_xk, x_k_plus_1, f_xk_plus_1, erro])
         # Critério de parada
         if erro < tol or abs(f_xk_plus_1) < 1e-12 : 
             return x_k_plus_1, historico_iteracoes
@@ -226,55 +234,42 @@ def secante(f,tol,max_iter):
 
 def regula_falsi(f, tol, max_iter):
     historico_iteracoes = []
-    x0 = x_selection("Forneça o primeiro ponto inicial a (ex.: '5'): ")
-    x1 = x_selection("Forneça o segundo ponto inicial b (ex.: '6.5'): ")
+    a = x_selection("Forneça o primeiro ponto inicial a (ex.: '5'): ")
+    b = x_selection("Forneça o segundo ponto inicial b (ex.: '6.5'): ")
 
-    f_x0 = f(x0)
-    f_x1 = f(x1)
+    f_a_val = f(a) 
+    f_b_val = f(b)
 
-    if f_x0 * f_x1 >= 0:
-        print("Erro: Os valores iniciais f(x0) e f(x1) devem ter sinais opostos.")
-        historico_iteracoes.append([0, x0, f_x0, x1, f_x1, None, None, float('inf')])
-        return None, historico_iteracoes
 
-    xc = None
-
+    x_prev = float('nan') 
+    
     for n_iter in range(1, max_iter + 1):
-       
-        f_x0 = f(x0)
-        f_x1 = f(x1)
+        f_a_val = f(a)
+        f_b_val = f(b)
 
-        denominador = f_x1 - f_x0
-        if abs(denominador) < 1e-12:
-            print("Denominador muito próximo de zero. O método pode não convergir.")
-            historico_iteracoes.append([n_iter, x0, f_x0,x1,f_x1, None, None, float('inf')])
-            return xc, historico_iteracoes 
+        x = (a * f_b_val - b * f_a_val) / (f_b_val - f_a_val)
+        f_x_val = f(float(x))
+        
+        erro = float('nan') 
+        if n_iter > 1:
+                erro = abs((x - x_prev) / x)
 
-        xc = x1 - f_x1 * (x1 - x0) / denominador
+        historico_iteracoes.append([n_iter, a, f_a_val, b, f_b_val, x, f_x_val, erro])
 
-        f_xc = f(xc)
-        erro_atual = abs(f_xc)
+        # Verifica se erro não é NaN antes de usá-lo na condição
+        if abs(f_x_val) < tol or (n_iter > 1 and not math.isnan(erro) and erro < tol):
+            return x, historico_iteracoes
 
-        historico_iteracoes.append([n_iter, x0, f_x0, x1,f_x1, xc, f_xc, erro_atual])
-
-        if erro_atual < tol:
-            return xc, historico_iteracoes
-
-        if f_x0 * f_xc < 0:
-            x1 = xc
-
-        elif f_x1 * f_xc < 0: 
-            x0 = xc
-
-        elif f_xc == 0:
-             return xc, historico_iteracoes
+        
+        if f_a_val * f_x_val < 0:
+            b = x
         else:
-            print("Erro inesperado: os sinais não permitem o estreitamento do intervalo.")
-            return xc, historico_iteracoes
+            a = x
+            
+        x_prev = x
 
-
-    print("Número máximo de iterações atingido. A solução pode não ter convergido para a tolerância desejada.")
-    return xc, historico_iteracoes
+    print("Número máximo de iterações atingido.")
+    return x, historico_iteracoes
 
 def ponto_fixo(f, tol, max_iter):
     g = safe_create_function(input("Forneça a função g(x) (ex.: 'sqrt(x + 1)' ou 'cos(x)'): "))
